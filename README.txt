@@ -3,7 +3,7 @@ one step stable regions in parameter space for network models, as per the work
 described in the article titled:
 "Local Graph Stability in Exponential Family Random Graph Models"
 by Yue Yu, Gianmarc Grazioli, Nolan E. Phillips, and Carter T. Butts
-https://arxiv.org/abs/1908.09470 
+https://arxiv.org/abs/1908.09470 (This link will be updated)
 
 The example used in the sample application (sampleRunScript.R) is a network 
 describing a network topology, which has been observed in amyloid fibrils, called 
