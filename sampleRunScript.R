@@ -19,7 +19,6 @@
 # 
 
 source("getDD.R")
-require(ergm.changestats)
 
 # Load the network object:
 load("2ribbonNetwork.RData")
@@ -31,3 +30,4 @@ myTerms<-"edges+kstar(2)+nsp(1:2)" #2-ribbon
 # Calculate the double description that defines the 1-step stable region:
 myStableRegionDD<-getDD(targetGraph, myTerms)
 print(myStableRegionDD)
+

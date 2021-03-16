@@ -17,7 +17,6 @@ library(ergm)
 library(sna)
 source("getVertices.R")
 
-
 # This function returns a raw M matrix, i.e. a typically redundant set of halfspaces,
 # the intersection of which defines the stable region. 
 getRawOneStepMmatrix<-function(targetGraph, rhsAsChar, dropRepeats = TRUE){
@@ -63,11 +62,28 @@ initializeDD<-function(m, radius = 100, cutoff = .00001){
   out
 }
 
+getDDforTwoStats <-function(mInit, radius = 100, cutoff = .00001){
+  vRep<-verticesForTwoStats(mInit, radius, cutoff)
+  hRep<-mInit
+  out<-vector("list", length = 3)
+  out[[1]]<-mInit
+  out[[2]]<-hRep
+  out[[3]]<-vRep
+  names(out)<-c("rawM", "hRep", "vRep")
+  out
+}
+
 # This function leverages the full capability of the double description
 # to calculate the one step stable region of a given network.  
 getDD<-function(targetGraph, rhsAsChar, radius = 100, cutoff = .00001, vCountMax = 10000, feelingLucky = FALSE){
   #vCountMax is the most vertices allowed to calculate exhaustively
   mInit<-getRawOneStepMmatrix(targetGraph, rhsAsChar)
+  #If there are only 2 terms in the model, proceed with the 2 term approach, otherwise
+  #proceed with the standard method:
+  if(ncol(mInit) < 3){
+    newDD<-getDDforTwoStats(mInit, radius, cutoff)
+    return(newDD)
+  }else
   vCount<-1
   rowMax<-1
   for (i in (ncol(mInit) - 1):nrow(mInit)) {

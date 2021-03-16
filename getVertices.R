@@ -11,6 +11,7 @@
 # be found below, preceding the functions they describe. 
 #
 # This code was written by Gianmarc Grazioli.
+#
 # The algorithms implemented in this code were developed by Yue Yu, 
 # Gianmarc Grazioli, and Carter T. Butts, and were introduced in a manuscript 
 # titled: "Local Graph Stability in Exponential Family Random Graph Models"
@@ -18,6 +19,41 @@
 # https://arxiv.org/abs/1908.09470 
 #
 
+# This more straightforward approach is ideal for cases with only two
+# sufficient statistics (e.g. the star graph representing the social
+# network structure of a cult in section 3 of "Local Graph Stability 
+# in Exponential Family Random Graph Models"). The getDD() function
+# automatically checks for this. 
+verticesForTwoStats<-function(mMatrix, radius, cutoff){
+  solutions<-list()
+  id<-diag(ncol(mMatrix))
+  ctr<-1
+  for (i in 1:nrow(mMatrix)) {
+    for(j in 1:nrow(id)){
+      hldr<-rbind(mMatrix[i,], id[j,]*radius)
+      if(tryInvert(hldr)){
+        solutions[[ctr]] <- solve(hldr, hldr[nrow(hldr),])
+        ctr=ctr+1
+        solutions[[ctr]] <- -solutions[[ctr-1]]
+        ctr=ctr+1
+      }
+    }
+  }
+  out<-list()
+  ctr=1
+  for (i in 1:length(solutions)) {
+    if(testWithMat(mMatrix, solutions[[i]], cutoff)){
+      out[[ctr]] <- normIt(solutions[[i]])*radius
+      ctr=ctr+1
+    }
+  }
+  out<-do.call(rbind, out)
+  out<-data.frame(out)
+  out[!duplicated(out),]
+}
+
+# This function uses a more general approach to finding the vertices
+# for network models with 3 or more sufficient statistics. 
 getVertices<-function(mMatrix, radius, cutoff, dropRedundantVerts = TRUE){
   # Find all dim - 1 possible combinations of rows of M-matrix
   # that will form the rays constructed from halfspace intersections.
@@ -119,12 +155,14 @@ normIt<-function(vec){
 }
 
 # Function to see if a matrix is invertable:
-tryInvert <- function(m) class(try(solve(m),silent=T))=="matrix"
+tryInvert <- function(m) is.matrix(try(solve(m),silent=T))
+
 
 # Function to test whether a vertex is in the stable region:
 testWithMat<-function(mMatrix, vec, cutoff){
-  #myVec<-as.vector(vec)
-  myVec<-vec
+  if(is.vector(vec))! {
+    myVec<-as.vector(vec)
+  }else myVec<-vec
   all(mMatrix %*% myVec <= cutoff)
 }
 
