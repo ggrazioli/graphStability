@@ -1,9 +1,9 @@
 The purpose of these R codes is to provide publicly available code for calculating
 one step stable regions in parameter space for network models, as per the work
-described in the article titled:
+described in our article in the SIAM Journal on Applied Mathematics titled:
 "Local Graph Stability in Exponential Family Random Graph Models"
 by Yue Yu, Gianmarc Grazioli, Nolan E. Phillips, and Carter T. Butts
-https://arxiv.org/abs/1908.09470 (This link will be updated)
+https://doi.org/10.1137/19M1286864 
 
 The example used in the sample application (sampleRunScript.R) is a network 
 describing a network topology, which has been observed in amyloid fibrils, called 
